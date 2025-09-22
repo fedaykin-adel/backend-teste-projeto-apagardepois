@@ -265,8 +265,11 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: "Internal Server Error", details: isDev ? String(err) : undefined });
 });
 const port = Number(process.env.PORT) || 3000;
+const isDev = process.env.NODE_ENV !== "production";
+if(isDev){
+  app.listen(port, () => {
+    console.log(`[dev] API ouvindo em http://localhost:${port}`);
+  });
 
-app.listen(port, () => {
-  console.log(`[dev] API ouvindo em http://localhost:${port}`);
-});
+}
 export default app;
