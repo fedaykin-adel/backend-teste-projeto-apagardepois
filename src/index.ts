@@ -6,9 +6,14 @@ import cookieParser from "cookie-parser";
 import { ingestPayload, traceBackendRoute } from "@shaayud/sdk-node";
 import dotenv from 'dotenv'
 import { prisma } from "./db/prisma";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma, Product } from "@prisma/client";
+
+type ProdutoSlim = Prisma.ProductGetPayload<{
+  select: { id: true; name: true; stock: true }
+}>;
+// import { PrismaClient } from "@prisma/client";
 // const prisma = new PrismaClient()
-export type Product = PrismaClient["product"]["$types"]["Default"]
+// export type Product = PrismaClient["product"]["$types"]["Default"]
 import {
   hashPassword,
   signUserJWT,
