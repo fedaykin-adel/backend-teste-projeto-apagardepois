@@ -1,0 +1,38 @@
+{
+  "name": "testes_in_node",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "prisma:gen": "prisma generate",
+    "prisma:dev": "prisma migrate dev --name init",
+    "prisma:studio": "prisma studio",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "run": "tsx watch src/index.ts",
+    "dev": " rm -rf node_modules/ && rm -rf package-lock.json && npm install /home/adel/project/shaarimkodeeb/shaayud/packages/sdk-node/shaayud-sdk-node-1.0.0.tgz && npm run run"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "tsx prisma/seed.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "@shaayud/sdk-node": "file:../shaarimkodeeb/shaayud/packages/sdk-node/shaayud-sdk-node-1.0.0.tgz",
+    "body-parser": "^2.2.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "jose": "^6.1.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/node": "^24.5.2",
+    "prisma": "^6.16.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  }
+}
