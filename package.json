@@ -8,7 +8,7 @@
     "prisma:studio": "prisma studio",
     "test": "echo \"Error: no test specified\" && exit 1",
     "run": "tsx watch src/index.ts",
-    "dev": " rm -rf node_modules/ && rm -rf package-lock.json && npm install /home/adel/project/shaarimkodeeb/shaayud/packages/sdk-node/shaayud-sdk-node-1.0.0.tgz && npm run run"
+    "dev": " rm -rf node_modules/ && rm -rf package-lock.json && npm install  && npm run run"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
