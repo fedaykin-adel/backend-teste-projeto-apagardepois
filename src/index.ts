@@ -99,6 +99,7 @@ app.get("/orders/:id", async (req: Request, res: Response) => {
 });
 
 // ------ CHECKOUT ------
+// Checkout route (substitua a função inteira pelo trecho abaixo)
 app.post("/checkout", async (req: Request, res: Response) => {
   // 1) Requer sessão
   const token = req.cookies?.[COOKIE_NAME] || "";
@@ -131,12 +132,13 @@ app.post("/checkout", async (req: Request, res: Response) => {
   const dbProducts = await prisma.product.findMany({ where: { id: { in: ids } } });
 
   if (dbProducts.length !== ids.length) {
-    const found = new Set(dbProducts.map((p: { id: any; }) => p.id));
+    const found = new Set(dbProducts.map((p) => p.id));
     const missing = ids.filter((id) => !found.has(id));
     return res.status(400).json({ error: `Produto(s) não encontrado(s): ${missing.join(", ")}` });
   }
 
-  const productById = new Map<string, Product>(dbProducts.map((p: { id: any; }) => [p.id, p]));
+  // índice por id (deixa o TS inferir o tipo certo)
+  const productById = new Map(dbProducts.map((p) => [p.id, p] as const));
 
   // 4) Monta itens e valida estoque
   const items = rawItems.map(({ productId, quantity }) => {
@@ -152,7 +154,8 @@ app.post("/checkout", async (req: Request, res: Response) => {
   const totalCents = items.reduce((acc, i) => acc + i.unitPriceCents * i.quantity, 0);
 
   try {
-    const order = await prisma.$transaction(async (tx: { product: { update: (arg0: { where: { id: string; }; data: { stock: { decrement: number; }; }; select: { id: boolean; stock: boolean; name: boolean; }; }) => any; }; order: { create: (arg0: { data: { email: string; userId: string; status: string; totalCents: number; items: { create: { productId: string; quantity: number; unitPriceCents: number; }[]; }; }; select: { id: boolean; totalCents: boolean; }; }) => any; }; }) => {
+    // **IMPORTANTE**: não tipe o `tx` aqui. Deixe o Prisma inferir o cliente transacional.
+    const order = await prisma.$transaction(async (tx) => {
       for (const it of items) {
         const updated = await tx.product.update({
           where: { id: it.productId },
@@ -165,26 +168,32 @@ app.post("/checkout", async (req: Request, res: Response) => {
           throw err;
         }
       }
+
+      // Se `Order.status` for enum, use $Enums:
       return tx.order.create({
-        data: {
-          email: user.email,
-          userId: user.sub,
-          status: "CONFIRMED",
-          totalCents,
-          items: {
-            create: items.map((i) => ({
-              productId: i.productId,
-              quantity: i.quantity,
-              unitPriceCents: i.unitPriceCents,
-            })),
-          },
-        },
-        select: { id: true, totalCents: true },
-      });
+  data: {
+    email: user.email,
+    userId: user.sub,
+    status: Prisma.OrderStatus.CONFIRMED, // <- aqui
+    totalCents,
+    items: {
+      create: items.map((i) => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        unitPriceCents: i.unitPriceCents,
+      })),
+    },
+  },
+  select: { id: true, totalCents: true },
+});
     });
 
-    const priceBRL = (v: number) => (v / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    return res.status(201).json({ ok: true, orderId: order.id, total: priceBRL(order.totalCents) });
+    const priceBRL = (v: number) =>
+      (v / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+    return res
+      .status(201)
+      .json({ ok: true, orderId: order.id, total: priceBRL(order.totalCents) });
   } catch (e: any) {
     if (e?.code === 409) return res.status(409).json({ error: e.message });
     if (e?.code === "P2025") return res.status(400).json({ error: "Produto não encontrado" });
