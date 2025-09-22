@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser";
 import { ingestPayload, traceBackendRoute } from "@shaayud/sdk-node";
 import dotenv from 'dotenv'
 import { prisma } from "./db/prisma";
-import { PrismaClient, Prisma, Product } from "@prisma/client";
+import { PrismaClient, Prisma, Product,$Enums } from "@prisma/client";
 
 type ProdutoSlim = Prisma.ProductGetPayload<{
   select: { id: true; name: true; stock: true }
@@ -174,7 +174,7 @@ app.post("/checkout", async (req: Request, res: Response) => {
   data: {
     email: user.email,
     userId: user.sub,
-    status: Prisma.OrderStatus.CONFIRMED, // <- aqui
+    status: $Enums.OrderStatus.CONFIRMED, // <- aqui
     totalCents,
     items: {
       create: items.map((i) => ({
