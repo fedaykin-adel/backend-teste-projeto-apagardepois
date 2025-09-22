@@ -19,7 +19,7 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^6.16.2",
-    "@shaayud/sdk-node": "file:../shaarimkodeeb/shaayud/packages/sdk-node/shaayud-sdk-node-1.0.0.tgz",
+    "@shaayud/sdk-node": "https://github.com/fedaykin-adel/sdk-node.git#main",
     "body-parser": "^2.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
