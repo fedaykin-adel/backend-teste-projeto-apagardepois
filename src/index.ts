@@ -47,7 +47,9 @@ if (process.env.NODE_ENV !== "production") {
     next();
   });
 }
-
+app.get("/", async(req:Request, resp: Response)=>{
+  return resp.json({ok:true})
+})
 // ------ INGEST ------
 app.post("/identity/ingest", async (req: Request, res: Response) => {
   try {
