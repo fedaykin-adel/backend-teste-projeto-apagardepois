@@ -1,4 +1,4 @@
-import { User } from "../generated/prisma";
+import { User } from "@prisma/client";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import { SignJWT, jwtVerify } from "jose";
 
